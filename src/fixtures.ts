@@ -8,7 +8,7 @@ export const HF_BASE = 'https://huggingface.co/diffusionstudio/piper-voices/reso
 /**
  * Inference runtime libary base path
  */
-export const ONNX_BASE = 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.19.2/dist/';
+export const ONNX_BASE = 'https://cdn.jsdelivr.net/npm/onnxruntime-web@dev/dist/';
 
 /**
  * Path to wasm related files

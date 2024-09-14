@@ -70,9 +70,11 @@ export async function predict(config: InferenceConfg, callback?: ProgressCallbac
 		Object.assign(feeds, { sid: new ort.Tensor('int64', [speakerId]) });
 	}
 
+	const start = performance.now();
 	const {
 		output: { data: pcm },
 	} = await session.run(feeds);
+	console.log('Time taken for session.run:', performance.now() - start + ' ms');
 
 	return new Blob([pcm2wav(pcm as Float32Array, 1, sampleRate)], { type: 'audio/x-wav' });
 }
