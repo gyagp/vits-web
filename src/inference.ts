@@ -5,7 +5,7 @@ import { fetchBlob } from './http.js';
 import { pcm2wav } from './audio';
 
 let module: typeof import('./piper.js');
-let ort: typeof import('onnxruntime-web');
+let ort: typeof import('onnxruntime-web/webgpu');
 
 /**
  * Run text to speech inference in new worker thread. Fetches the model
@@ -13,7 +13,7 @@ let ort: typeof import('onnxruntime-web');
  */
 export async function predict(config: InferenceConfg, callback?: ProgressCallback): Promise<Blob> {
 	module = module ?? (await import('./piper.js'));
-	ort = ort ?? (await import('onnxruntime-web'));
+	ort = ort ?? (await import('onnxruntime-web/webgpu'));
 
 	const path = PATH_MAP[config.voiceId];
 	const input = JSON.stringify([{ text: config.text.trim() }]);
@@ -57,7 +57,10 @@ export async function predict(config: InferenceConfg, callback?: ProgressCallbac
 	const noiseW = modelConfig.inference.noise_w;
 
 	const modelBlob = await getBlob(`${HF_BASE}/${path}`, callback);
-	const session = await ort.InferenceSession.create(await modelBlob.arrayBuffer());
+	const sessionOptions = {
+		executionProviders: ['webgpu'], // may be changed to webgpu
+	  }
+	const session = await ort.InferenceSession.create(await modelBlob.arrayBuffer(), sessionOptions);
 	const feeds = {
 		input: new ort.Tensor('int64', phonemeIds, [1, phonemeIds.length]),
 		input_lengths: new ort.Tensor('int64', [phonemeIds.length]),
