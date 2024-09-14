@@ -58,7 +58,7 @@ export async function predict(config: InferenceConfg, callback?: ProgressCallbac
 
 	const modelBlob = await getBlob(`${HF_BASE}/${path}`, callback);
 	const sessionOptions = {
-		executionProviders: ['webgpu'], // may be changed to webgpu
+		executionProviders: ['webgpu'], // may be changed to wasm or webgpu for different EPs
 	  }
 	const session = await ort.InferenceSession.create(await modelBlob.arrayBuffer(), sessionOptions);
 	const feeds = {
